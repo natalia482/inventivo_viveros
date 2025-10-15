@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inventivo_viveros/login_screen.dart';
+import 'package:inventivo_viveros/widgets/background_section_home.dart';
+import 'package:inventivo_viveros/widgets/header_section_home.dart';
 // Paleta de colores Inventivo
 class AppColors {
   static const Color primaryGreen = Color(0xFF1A5327);
@@ -23,10 +25,8 @@ class HomePage extends StatelessWidget {
           final isTablet = screenWidth >= 700 && screenWidth < 1100;
           final isDesktop = screenWidth >= 1100;
 
-          return Stack(
-            children: [
-              const _BackgroundImage(),
-              SingleChildScrollView(
+          return InventivoBackground(
+             child:SingleChildScrollView(
                 child: SafeArea(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _HeaderSection(isMobile: isMobile),
+                        InventivoHeader(isMobile: isMobile),
                         SizedBox(height: isMobile ? 60 : 100),
                         _MainTextSection(isMobile: isMobile, isTablet: isTablet),
                         SizedBox(height: isMobile ? 40 : 80),
@@ -51,119 +51,9 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
           );
         },
       ),
-    );
-  }
-}
-
-// Imagen de fondo
-class _BackgroundImage extends StatelessWidget {
-  const _BackgroundImage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/fondo.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Container(color: const Color.from(alpha: 0.478, red: 0.757, green: 0.78, blue: 0.757)),
-    );
-  }
-}
-
-// Encabezado con logo + botones
-class _HeaderSection extends StatelessWidget {
-  final bool isMobile;
-  const _HeaderSection({required this.isMobile});
-
-  @override
-  Widget build(BuildContext context) {
-    final logo = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'INVENTIV',
-          style: TextStyle(
-            color: AppColors.accentYellow,
-            fontFamily: 'Poppins',
-            fontSize: isMobile ? 34 : 48,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Container(
-          width: isMobile ? 36 : 50,
-          height: isMobile ? 36 : 50,
-          decoration: const BoxDecoration(
-            color: AppColors.primaryGreen,
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(Icons.eco, color: Colors.white, size: 28),
-        ),
-      ],
-    );
-
-    final buttons = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _HeaderButton(text: 'Iniciar Sesión', color: AppColors.darkGreen),
-        const SizedBox(width: 15),
-        _HeaderButton(text: 'InventiBOT', color: AppColors.primaryGreen),
-      ],
-    );
-
-    return isMobile
-        ? Column(
-            children: [
-              logo,
-              const SizedBox(height: 15),
-              buttons,
-            ],
-          )
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              logo,
-              buttons,
-            ],
-          );
-  }
-}
-
-// Botones superiores
-class _HeaderButton extends StatelessWidget {
-  final String text;
-  final Color color;
-
-  const _HeaderButton({required this.text, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context, 
-          MaterialPageRoute<void>(
-            builder:(context) => 
-            const LoginPage()
-            ),
-          );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 14),
-        textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        elevation: 1,
-      ),
-      child: Text(text),
     );
   }
 }
