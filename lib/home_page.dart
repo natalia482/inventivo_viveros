@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:inventivo_viveros/login_screen.dart';
 // Paleta de colores Inventivo
 class AppColors {
   static const Color primaryGreen = Color(0xFF1A5327);
@@ -146,7 +146,15 @@ class _HeaderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context, 
+          MaterialPageRoute<void>(
+            builder:(context) => 
+            const LoginPage()
+            ),
+          );
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
         foregroundColor: Colors.white,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventivo_viveros/home_page.dart';
-
+import 'package:inventivo_viveros/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,10 +11,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title:  'INVENTIVO',
-      home: HomePage(),
+      title: 'INVENTIVO',
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomePage(),
+      },
+      //home: const HomePage(), 
     );
   }
 }
