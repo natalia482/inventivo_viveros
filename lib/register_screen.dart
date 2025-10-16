@@ -13,7 +13,7 @@ class RegisterScreen extends StatelessWidget {
       body: InventivoBackground(
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 26),
+            padding: const EdgeInsets.symmetric(horizontal: 54, vertical: 50),
             child: Column(
               children: [
                 // HEADER
@@ -110,7 +110,7 @@ class RegisterScreen extends StatelessWidget {
       child: TextField(
         obscureText: obscure,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.black54, size: 28),
+          prefixIcon: Icon(icon, color: const Color.fromARGB(137, 199, 27, 27), size: 28),
           hintText: label,
           hintStyle: const TextStyle(
             color: Colors.black87,
