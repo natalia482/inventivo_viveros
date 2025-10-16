@@ -24,7 +24,7 @@ class RegisterScreen extends StatelessWidget {
 
                 // TÍTULO
                 const Text(
-                  "Registrar cliente",
+                  "Registrar administrador",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 36,
