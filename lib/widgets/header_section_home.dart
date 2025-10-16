@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inventivo_viveros/home_page.dart';
 import '../login_screen.dart'; // Ajusta el import según tu estructura
 
 class InventivoHeader extends StatelessWidget {
@@ -8,37 +9,43 @@ class InventivoHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'INVENTIV',
-          style: TextStyle(
-            color: const Color(0xFFF7C948), // Amarillo
-            fontFamily: 'Poppins',
-            fontSize: isMobile ? 34 : 48,
-            fontWeight: FontWeight.w900,
+    // 1. Envolver la estructura del logo en un GestureDetector
+    final logo = GestureDetector(
+      onTap: () {
+        Navigator.pushReplacementNamed(context, '/');
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'INVENTIV',
+            style: TextStyle(
+              color: const Color(0xFFF7C948), // Amarillo
+              fontFamily: 'Poppins',
+              fontSize: isMobile ? 34 : 48,
+              fontWeight: FontWeight.w900,
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Container(
-          width: isMobile ? 36 : 50,
-          height: isMobile ? 36 : 50,
-          decoration: const BoxDecoration(
-            color: Color(0xFF1A5327),
-            shape: BoxShape.circle,
+          Container(
+            width: isMobile ? 36 : 50,
+            height: isMobile ? 36 : 50,
+            decoration: const BoxDecoration(
+              color: Color(0xFF1A5327),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.eco, color: Colors.white, size: 28),
           ),
-          child: const Icon(Icons.eco, color: Colors.white, size: 28),
-        ),
-      ],
+        ],
+      ),
     );
 
+    // ... (El resto del código sigue igual)
     final buttons = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _HeaderButton(text: 'Iniciar Sesión', color: const Color(0xFF0D6832)),
-        const SizedBox(width: 15),
-        _HeaderButton(text: 'InventiBOT', color: const Color(0xFF1A5327)),
+      _HeaderButton(text: 'Iniciar Sesión', color: const Color(0xFF0D6832)),
+      const SizedBox(width: 15),
+      _HeaderButton(text: 'InventiBOT', color: const Color(0xFF1A5327)),
       ],
     );
 

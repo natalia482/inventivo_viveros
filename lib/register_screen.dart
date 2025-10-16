@@ -47,10 +47,6 @@ class RegisterScreen extends StatelessWidget {
                       children: [
                         _buildInputField(Icons.person, "Nombres", width: fieldWidth),
                         _buildInputField(Icons.person, "Apellidos", width: fieldWidth),
-                        _buildInputField(Icons.assignment, "Tipo de documento",
-                            width: fieldWidth),
-                        _buildInputField(Icons.credit_card, "Número de documento",
-                            width: fieldWidth),
                         _buildInputField(Icons.location_city, "Ciudad", width: fieldWidth),
                         _buildInputField(Icons.email, "Correo electrónico",
                             width: fieldWidth),
