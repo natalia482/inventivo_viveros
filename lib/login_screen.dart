@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inventivo_viveros/dashboard.dart';
 import 'package:inventivo_viveros/register_screen.dart';
 import 'package:inventivo_viveros/widgets/background_section_home.dart';
 import 'package:inventivo_viveros/widgets/header_section_home.dart';
@@ -105,7 +106,12 @@ class LoginPage extends StatelessWidget {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(builder: (context)=> const MainDashboardScreen()),
+                                  );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     const Color.fromARGB(255, 31, 99, 45),

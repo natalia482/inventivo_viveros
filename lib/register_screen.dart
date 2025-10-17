@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inventivo_viveros/login_screen.dart';
 import 'package:inventivo_viveros/widgets/background_section_home.dart';
 import 'package:inventivo_viveros/widgets/header_section_home.dart';
 
@@ -62,7 +63,12 @@ class RegisterScreen extends StatelessWidget {
 
                 // BOTÓN REGISTRAR
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute<void>(builder: (context) => const LoginPage()),
+                      );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1A5327),
                     padding:
@@ -110,7 +116,7 @@ class RegisterScreen extends StatelessWidget {
       child: TextField(
         obscureText: obscure,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: const Color.fromARGB(137, 199, 27, 27), size: 28),
+          prefixIcon: Icon(icon, color: const Color.fromARGB(135, 0, 0, 0), size: 20),
           hintText: label,
           hintStyle: const TextStyle(
             color: Colors.black87,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inventivo_viveros/login_screen.dart';
+//import 'package:inventivo_viveros/login_screen.dart';
 import 'package:inventivo_viveros/widgets/background_section_home.dart';
 import 'package:inventivo_viveros/widgets/header_section_home.dart';
 // Paleta de colores Inventivo
