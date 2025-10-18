@@ -97,7 +97,7 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  // --- CAMPO PERSONALIZADO ---
+
   Widget _buildInputField(IconData icon, String label,
       {required double width, bool obscure = false}) {
     return Container(
