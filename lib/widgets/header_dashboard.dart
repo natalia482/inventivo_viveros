@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:inventivo_viveros/home_page.dart';
-import 'package:inventivo_viveros/configuration.dart';
+import 'package:inventivo_viveros/screens/home_page.dart';
+import 'package:inventivo_viveros/screens/configuration.dart';
 
 // Definición de Colores
 class DashboardColors {

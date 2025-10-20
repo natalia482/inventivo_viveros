@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 //import 'package:inventivo_viveros/home_page.dart';
-import '../login_screen.dart'; // Ajusta el import según tu estructura
+import '../screens/login_screen.dart'; // Ajusta el import según tu estructura
 
 class InventivoHeader extends StatelessWidget {
   final bool isMobile;
@@ -79,7 +79,7 @@ class _HeaderButton extends StatelessWidget {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute<void>(builder: (context) => const LoginPage()),
+          MaterialPageRoute<void>(builder: (context) =>  LoginScreen()),
         );
       },
       style: ElevatedButton.styleFrom(

@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:inventivo_viveros/home_page.dart';
-import 'package:inventivo_viveros/login_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/home_page.dart';
+import 'screens/register_screen.dart'; // si ya tienes el registro
 
 void main() {
-  runApp(const MyApp());
+  runApp(const InventivoApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class InventivoApp extends StatelessWidget {
+  const InventivoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'INVENTIVO',
+      title: 'Inventivo',
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomePage(),
-        '/login': (context) => const LoginPage(),
-        '/salir': (context) => const HomePage(),
+        '/': (context) => const LoginScreen(),
+        '/home': (context) => const HomePage(),
+        '/register': (context) => RegisterPage(), // si existe
       },
-      //home: const HomePage(), 
     );
   }
 }
