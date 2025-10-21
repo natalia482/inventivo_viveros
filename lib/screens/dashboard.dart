@@ -1,46 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'login_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  bool isLoading = true;
+class _DashboardScreenState extends State<DashboardScreen> {
+  String? email;
+   String? name;
+  String? role;
+ 
 
   @override
   void initState() {
     super.initState();
-    checkLoginStatus();
+    _loadUser();
   }
 
-  Future<void> checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  Future<void> _loadUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLogged = prefs.getBool('isLogged') ?? false;
 
-    if (!isLoggedIn) {
-      // Si no está logeado, redirigir al login
-      Navigator.pushReplacementNamed(context, '/');
-    } else {
-      setState(() {
-        isLoading = false;
-      });
+    if (!isLogged) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+      return;
     }
+
+    setState(() {
+      email = prefs.getString('email') ?? 'Usuario desconocido';
+      name = prefs.getString('name') ?? 'Usuario';
+      role = prefs.getString('rol') ?? 'trabajador';
+    });
   }
 
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); // borra la sesión
-
-    Navigator.pushReplacementNamed(context, '/');
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (email == null || role == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
@@ -48,19 +59,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bienvenido a Inventivo'),
-        backgroundColor: Colors.green,
+        title: Text("Bienvenido, $name ($role)"),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: logout,
-          ),
+          IconButton(onPressed: logout, icon: const Icon(Icons.logout)),
         ],
       ),
-      body: const Center(
+      body: Center(
         child: Text(
-          '¡Inicio de sesión exitoso!',
-          style: TextStyle(fontSize: 20),
+          role == "Administrador"
+              ? "Acceso completo para $role ($name)"
+              : "Acceso limitado para $role ($name)",
+          style: const TextStyle(fontSize: 18),
         ),
       ),
     );

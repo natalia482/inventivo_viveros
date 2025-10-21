@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
-import 'screens/home_page.dart';
-import 'screens/register_screen.dart'; // si ya tienes el registro
+import 'package:inventivo_viveros/screens/dashboard.dart';
+import 'package:inventivo_viveros/screens/register_screen.dart';
+import 'package:inventivo_viveros/screens/home_page.dart';
+import 'package:inventivo_viveros/screens/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const InventivoApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLogged = prefs.getBool('isLogged') ?? false;
+
+  runApp(MyApp(isLogged: isLogged));
 }
 
-class InventivoApp extends StatelessWidget {
-  const InventivoApp({super.key});
+class MyApp extends StatelessWidget {
+  final bool isLogged;
+  const MyApp({super.key, required this.isLogged});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Inventivo',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginScreen(),
-        '/home': (context) => const HomePage(),
-        '/register': (context) => RegisterPage(), // si existe
-      },
+      home: isLogged ? const DashboardScreen() : const LoginScreen(),
     );
   }
 }
