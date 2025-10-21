@@ -17,5 +17,5 @@ class ApiConfig {
   // Endpoints
   static String get listPlantasUrl => "${getBaseUrl()}/listar.php";
   static String get addPlantaUrl => "${getBaseUrl()}/agregar.php";
-  static String get updatePlantaUrl => "${getBaseUrl()}/actualizar.php";
+  static String get updatePlantaUrl => "${getBaseUrl()}/editar.php";
 }

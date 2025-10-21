@@ -29,6 +29,8 @@ class _AgregarPlantaScreenState extends State<AgregarPlantaScreen> {
     super.dispose();
   }
 
+  
+
   Future<void> _agregarPlanta() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -62,7 +64,7 @@ class _AgregarPlantaScreenState extends State<AgregarPlantaScreen> {
         priceController.clear();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('❌ Error al agregar la planta')),
+          const SnackBar(content: Text('La planta ya existe')),
         );
       }
     } catch (e) {

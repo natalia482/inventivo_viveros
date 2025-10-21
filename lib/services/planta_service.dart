@@ -33,6 +33,9 @@ class PlantasService {
     }
   }
 
+  
+  
+
   Future<bool> agregarPlanta(Planta planta) async {
     try {
       final url = Uri.parse('$baseUrl/agregar.php');
@@ -56,4 +59,29 @@ class PlantasService {
       return false;
     }
   }
+
+  Future<bool> editarPlanta(Planta planta) async {
+    try {
+      final url = Uri.parse('$baseUrl/editar.php');
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(planta.toJson()),
+      );
+
+      print("📡 PUT → $url");
+      print("📤 Enviando: ${planta.toJson()}");
+      print("📨 Respuesta: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['success'] == true;
+      }
+      return false;
+    } catch (e) {
+      print("🚨 Error en editarPlanta(): $e");
+      return false;
+    }
+  }
 }
+

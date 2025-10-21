@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../models/planta_model.dart';
-import '../../services/planta_service.dart';
+import 'package:inventivo_viveros/models/planta_model.dart';
+import 'package:inventivo_viveros/services/planta_service.dart';
+import 'package:inventivo_viveros/screens/plantas/editar_plantas.dart';
 
 class PlantasScreen extends StatefulWidget {
   const PlantasScreen({super.key});
@@ -10,106 +11,63 @@ class PlantasScreen extends StatefulWidget {
 }
 
 class _PlantasScreenState extends State<PlantasScreen> {
-  late Future<List<Planta>> _futurePlantas;
+  final PlantasService _service = PlantasService();
+  late Future<List<Planta>> _plantasFuture;
 
   @override
   void initState() {
     super.initState();
-    _cargarPlantas();
+    _plantasFuture = _service.listarPlantas();
   }
 
-  void _cargarPlantas() {
+  Future<void> _refresh() async {
     setState(() {
-      _futurePlantas = PlantasService().listarPlantas();
+      _plantasFuture = _service.listarPlantas();
     });
-  }
-
-  Future<void> _refrescar() async {
-    _cargarPlantas();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text("🌿 Listado de Plantas"),
-        backgroundColor: Colors.green,
-        actions: [
-          IconButton(
-            onPressed: _refrescar,
-            icon: const Icon(Icons.refresh),
-          )
-        ],
-      ),
       body: FutureBuilder<List<Planta>>(
-        future: _futurePlantas,
+        future: _plantasFuture,
         builder: (context, snapshot) {
-          // 🔹 Muestra mientras carga
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // 🔹 Si ocurre un error
           if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                "Error al cargar las plantas:\n${snapshot.error}",
-                textAlign: TextAlign.center,
-              ),
-            );
+            return Center(child: Text("Error: ${snapshot.error}"));
           }
 
-          // 🔹 Si no hay datos o la lista está vacía
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text("No hay plantas registradas 🌱"),
-            );
-          }
-
-          // 🔹 Si hay datos
-          final plantas = snapshot.data!;
+          final plantas = snapshot.data ?? [];
 
           return RefreshIndicator(
-            onRefresh: _refrescar,
+            onRefresh: _refresh,
             child: ListView.builder(
-              padding: const EdgeInsets.all(8),
               itemCount: plantas.length,
               itemBuilder: (context, index) {
-                final p = plantas[index];
-
+                final planta = plantas[index];
                 return Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  margin: const EdgeInsets.all(8),
                   child: ListTile(
-                    leading: const Icon(Icons.local_florist, color: Colors.green),
-                    title: Text(
-                      p.nameplants,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Tipo: ${p.typeplants}"),
-                        Text("Número de bolsa: ${p.numberbag}"),
-                        Text("Cantidad: ${p.cantidad}"),
-                        Text("Precio: \$${p.price}"),
-                        Text("Fecha: ${p.fechaRegistro}"),
-                      ],
-                    ),
-                    trailing: Text(
-                      p.estado,
-                      style: TextStyle(
-                        color: p.estado.toLowerCase() == "disponible"
-                            ? Colors.green
-                            : Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    title: Text(planta.nameplants),
+                    subtitle: Text(
+                        "Tipo: ${planta.typeplants}\nCantidad: ${planta.cantidad}\nPrecio: \$${planta.price}"),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.edit, color: Colors.green),
+                      onPressed: () async {
+                        // 👇 Navegamos al editor pasando la planta seleccionada
+                        final updated = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditarPlantaScreen(planta: planta),
+                          ),
+                        );
+
+                        // Si se actualizó, refrescamos la lista
+                        if (updated == true) _refresh();
+                      },
                     ),
                   ),
                 );

@@ -4,6 +4,7 @@ import 'login_screen.dart';
 import 'package:inventivo_viveros/widgets/header_dashboard.dart';
 import 'plantas/lista_plantas.dart';
 import 'plantas/agregar_plantas.dart';
+import 'plantas/editar_plantas.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
