@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_screen.dart';
+import 'package:inventivo_viveros/widgets/header_dashboard.dart';
+import 'plantas/lista_plantas.dart';
+import 'plantas/agregar_plantas.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -11,9 +14,15 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   String? email;
-   String? name;
+  String? name;
   String? role;
- 
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = [
+    const Center(child: Text("Bienvenido al panel de control", style: TextStyle(fontSize: 18))),
+    const PlantasScreen(),
+    const AgregarPlantaScreen(),
+  ];
 
   @override
   void initState() {
@@ -49,6 +58,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // 🔹 Función que se ejecutará cuando el usuario cambie de vista desde el header
+  void _onMenuSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (email == null || role == null) {
@@ -58,20 +74,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Bienvenido, $name ($role)"),
-        actions: [
-          IconButton(onPressed: logout, icon: const Icon(Icons.logout)),
-        ],
-      ),
-      body: Center(
-        child: Text(
-          role == "Administrador"
-              ? "Acceso completo para $role ($name)"
-              : "Acceso limitado para $role ($name)",
-          style: const TextStyle(fontSize: 18),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: HeaderDashboard(
+          userName: name ?? 'Usuario',
+          role: role ?? 'trabajador',
+          onMenuSelected: _onMenuSelected, // 👈 Pasamos el callback
+          onLogout: logout,
         ),
       ),
+      body: _pages[_selectedIndex], // 👈 cambia el contenido del cuerpo
     );
   }
 }
