@@ -3,7 +3,9 @@ import 'package:inventivo_viveros/models/planta_model.dart';
 import 'package:inventivo_viveros/services/planta_service.dart';
 
 class AgregarPlantaScreen extends StatefulWidget {
-  const AgregarPlantaScreen({super.key});
+  final VoidCallback? onGuardado;
+
+  const AgregarPlantaScreen({super.key, this.onGuardado});
 
   @override
   State<AgregarPlantaScreen> createState() => _AgregarPlantaScreenState();
@@ -11,137 +13,96 @@ class AgregarPlantaScreen extends StatefulWidget {
 
 class _AgregarPlantaScreenState extends State<AgregarPlantaScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController typeController = TextEditingController();
-  final TextEditingController numberBagController = TextEditingController();
-  final TextEditingController cantidadController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
+  final _service = PlantasService();
+  bool _isSaving = false;
 
-  bool isLoading = false;
+  final _nameCtrl = TextEditingController();
+  final _typeCtrl = TextEditingController();
+  final _bagCtrl = TextEditingController();
+  final _cantidadCtrl = TextEditingController();
+  final _priceCtrl = TextEditingController();
+  final _estadoCtrl = TextEditingController(text: 'Disponible');
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    typeController.dispose();
-    numberBagController.dispose();
-    cantidadController.dispose();
-    priceController.dispose();
-    super.dispose();
-  }
+  Future<void> _guardarPlanta() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isSaving = true);
 
-  
-
-  Future<void> _agregarPlanta() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => isLoading = true);
-
-    try {
       final planta = Planta(
         id: 0,
-        nameplants: nameController.text.trim(),
-        typeplants: typeController.text.trim(),
-        numberbag: numberBagController.text.trim(),
-        cantidad: int.tryParse(cantidadController.text) ?? 0,
-        price: double.tryParse(priceController.text) ?? 0.0,
-        estado: "Disponible",
-        fechaRegistro: DateTime.now(),
+        nameplants: _nameCtrl.text.trim(),
+        typeplants: _typeCtrl.text.trim(),
+        numberbag: _bagCtrl.text.trim(),
+        cantidad: int.parse(_cantidadCtrl.text),
+        price: double.parse(_priceCtrl.text),
+        estado: _estadoCtrl.text.trim(),
       );
 
-      final success = await PlantasService().agregarPlanta(planta);
+      final ok = await _service.agregarPlanta(planta);
 
-      setState(() => isLoading = false);
+      setState(() => _isSaving = false);
 
-      if (success) {
+      if (ok && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('✅ Planta agregada correctamente')),
         );
-        _formKey.currentState!.reset();
-        nameController.clear();
-        typeController.clear();
-        numberBagController.clear();
-        cantidadController.clear();
-        priceController.clear();
+        widget.onGuardado?.call();
+        _nameCtrl.clear();
+        _typeCtrl.clear();
+        _bagCtrl.clear();
+        _cantidadCtrl.clear();
+        _priceCtrl.clear();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('La planta ya existe')),
+          const SnackBar(content: Text('🚨 La planta ya existe o ocurrió un error')),
         );
       }
-    } catch (e) {
-      setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('🚨 Error: $e')),
-      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Card(
-            elevation: 5,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      "Agregar Nueva Planta 🌿",
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: nameController,
-                      decoration: const InputDecoration(labelText: "Nombre de la planta"),
-                      validator: (value) => value!.isEmpty ? "Campo obligatorio" : null,
-                    ),
-                    TextFormField(
-                      controller: typeController,
-                      decoration: const InputDecoration(labelText: "Tipo de planta"),
-                    ),
-                    TextFormField(
-                      controller: numberBagController,
-                      decoration: const InputDecoration(labelText: "Número de bolsa"),
-                      validator: (value) => value!.isEmpty ? "Campo obligatorio" : null,
-                    ),
-                    TextFormField(
-                      controller: cantidadController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(labelText: "Cantidad"),
-                      validator: (value) => value!.isEmpty ? "Campo obligatorio" : null,
-                    ),
-                    TextFormField(
-                      controller: priceController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(labelText: "Precio"),
-                      validator: (value) => value!.isEmpty ? "Campo obligatorio" : null,
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      onPressed: isLoading ? null : _agregarPlanta,
-                      icon: const Icon(Icons.add),
-                      label: isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text("Agregar Planta"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+      appBar: AppBar(title: const Text('Agregar Planta')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: _nameCtrl,
+                decoration: const InputDecoration(labelText: 'Nombre de la planta'),
+                validator: (v) => v!.isEmpty ? 'Campo requerido' : null,
               ),
-            ),
+              TextFormField(
+                controller: _typeCtrl,
+                decoration: const InputDecoration(labelText: 'Tipo de planta'),
+              ),
+              TextFormField(
+                controller: _bagCtrl,
+                decoration: const InputDecoration(labelText: 'Número de bolsa'),
+              ),
+              TextFormField(
+                controller: _cantidadCtrl,
+                decoration: const InputDecoration(labelText: 'Cantidad'),
+                keyboardType: TextInputType.number,
+              ),
+              TextFormField(
+                controller: _priceCtrl,
+                decoration: const InputDecoration(labelText: 'Precio'),
+                keyboardType: TextInputType.number,
+              ),
+              TextFormField(
+                controller: _estadoCtrl,
+                decoration: const InputDecoration(labelText: 'Estado'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: _isSaving ? null : _guardarPlanta,
+                icon: const Icon(Icons.save),
+                label: const Text('Guardar'),
+              ),
+            ],
           ),
         ),
       ),

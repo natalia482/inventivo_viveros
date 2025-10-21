@@ -6,7 +6,7 @@ class Planta {
   final int cantidad;
   final double price;
   final String estado;
-  final DateTime fechaRegistro;
+
 
   Planta({
     required this.id,
@@ -16,7 +16,6 @@ class Planta {
     required this.cantidad,
     required this.price,
     required this.estado,
-    required this.fechaRegistro,
   });
 
   factory Planta.fromJson(Map<String, dynamic> json) {
@@ -28,7 +27,6 @@ class Planta {
       cantidad: int.parse(json['cantidad'].toString()),
       price: double.parse(json['price'].toString()),
       estado: json['estado'] ?? 'Disponible',
-      fechaRegistro: DateTime.tryParse(json['fecha_registro'] ?? '') ?? DateTime.now(),
     );
   }
 

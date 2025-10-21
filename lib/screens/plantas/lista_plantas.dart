@@ -1,77 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:inventivo_viveros/models/planta_model.dart';
 import 'package:inventivo_viveros/services/planta_service.dart';
-import 'package:inventivo_viveros/screens/plantas/editar_plantas.dart';
 
 class PlantasScreen extends StatefulWidget {
-  const PlantasScreen({super.key});
+  final Function(Planta)? onEditar; // <--- callback opcional
+
+  const PlantasScreen({super.key, this.onEditar});
 
   @override
   State<PlantasScreen> createState() => _PlantasScreenState();
 }
 
 class _PlantasScreenState extends State<PlantasScreen> {
-  final PlantasService _service = PlantasService();
-  late Future<List<Planta>> _plantasFuture;
+  final _service = PlantasService();
+  List<Planta> _plantas = [];
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _plantasFuture = _service.listarPlantas();
+    _cargarPlantas();
   }
 
-  Future<void> _refresh() async {
-    setState(() {
-      _plantasFuture = _service.listarPlantas();
-    });
+  Future<void> _cargarPlantas() async {
+    try {
+      final lista = await _service.listarPlantas();
+      setState(() {
+        _plantas = lista;
+        _loading = false;
+      });
+    } catch (e) {
+      print("Error cargando plantas: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder<List<Planta>>(
-        future: _plantasFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    if (_loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-          if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          }
+    if (_plantas.isEmpty) {
+      return const Center(child: Text('No hay plantas registradas'));
+    }
 
-          final plantas = snapshot.data ?? [];
-
-          return RefreshIndicator(
-            onRefresh: _refresh,
-            child: ListView.builder(
-              itemCount: plantas.length,
-              itemBuilder: (context, index) {
-                final planta = plantas[index];
-                return Card(
-                  margin: const EdgeInsets.all(8),
-                  child: ListTile(
-                    title: Text(planta.nameplants),
-                    subtitle: Text(
-                        "Tipo: ${planta.typeplants}\nCantidad: ${planta.cantidad}\nPrecio: \$${planta.price}"),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.green),
-                      onPressed: () async {
-                        // 👇 Navegamos al editor pasando la planta seleccionada
-                        final updated = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => EditarPlantaScreen(planta: planta),
-                          ),
-                        );
-
-                        // Si se actualizó, refrescamos la lista
-                        if (updated == true) _refresh();
-                      },
-                    ),
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: ListView.builder(
+        itemCount: _plantas.length,
+        itemBuilder: (context, index) {
+          final p = _plantas[index];
+          return Card(
+            elevation: 2,
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: ListTile(
+              title: Text(p.nameplants),
+              subtitle: Text('Tipo: ${p.typeplants} | Precio: ${p.price} |  Cantidad: ${p.cantidad}'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () {
+                      // si viene del dashboard, llama al callback
+                      if (widget.onEditar != null) {
+                        widget.onEditar!(p);
+                      }
+                    },
                   ),
-                );
-              },
+                ],
+              ),
             ),
           );
         },

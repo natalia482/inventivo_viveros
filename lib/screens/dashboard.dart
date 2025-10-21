@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login_screen.dart';
+import 'package:inventivo_viveros/screens/login_screen.dart';
 import 'package:inventivo_viveros/widgets/header_dashboard.dart';
-import 'plantas/lista_plantas.dart';
-import 'plantas/agregar_plantas.dart';
-import 'plantas/editar_plantas.dart';
+import 'package:inventivo_viveros/screens/plantas/lista_plantas.dart';
+import 'package:inventivo_viveros/screens/plantas/agregar_plantas.dart';
+import 'package:inventivo_viveros/screens/plantas/editar_plantas.dart';
+import 'package:inventivo_viveros/models/planta_model.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -18,12 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String? name;
   String? role;
   int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    const Center(child: Text("Bienvenido al panel de control", style: TextStyle(fontSize: 18))),
-    const PlantasScreen(),
-    const AgregarPlantaScreen(),
-  ];
+  Planta? _plantaSeleccionada;
 
   @override
   void initState() {
@@ -59,10 +55,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // 🔹 Función que se ejecutará cuando el usuario cambie de vista desde el header
+  /// Controla qué pantalla se muestra en el cuerpo del dashboard
   void _onMenuSelected(int index) {
     setState(() {
       _selectedIndex = index;
+      _plantaSeleccionada = null; // resetea la edición
+    });
+  }
+
+  /// Abre el editor de una planta dentro del dashboard
+  void _abrirEditarPlanta(Planta planta) {
+    setState(() {
+      _plantaSeleccionada = planta;
+      _selectedIndex = 3; // índice especial para edición
     });
   }
 
@@ -74,17 +79,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     }
 
+    // Lista de páginas normales
+    final List<Widget> pages = [
+      const Center(child: Text("Bienvenido al panel de control", style: TextStyle(fontSize: 18))),
+      PlantasScreen(onEditar: _abrirEditarPlanta), // <-- Aquí enviamos la función para editar
+      AgregarPlantaScreen(
+        onGuardado: () {
+          setState(() {
+            _selectedIndex=1;
+          });
+        },
+      ),
+      if (_plantaSeleccionada != null)
+        EditarPlantaScreen(
+          planta: _plantaSeleccionada!,
+          onGuardado: () {
+            setState(() {
+              _selectedIndex = 1; // 👈 vuelve a la lista
+              _plantaSeleccionada = null;
+            });
+          },
+        )
+      else
+        const Center(child: Text('Seleccione una planta para editar')),
+    ];
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: HeaderDashboard(
           userName: name ?? 'Usuario',
           role: role ?? 'trabajador',
-          onMenuSelected: _onMenuSelected, // 👈 Pasamos el callback
+          onMenuSelected: _onMenuSelected,
           onLogout: logout,
         ),
       ),
-      body: _pages[_selectedIndex], // 👈 cambia el contenido del cuerpo
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: pages[_selectedIndex],
+      ),
     );
   }
 }
