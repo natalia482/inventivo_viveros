@@ -222,16 +222,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           barGroups: [
             BarChartGroupData(x: 0, barRods: [
-              BarChartRodData(toY: 4, color: Colors.green[400]),
+              BarChartRodData(toY: 4, color: Colors.green[400], width: 25),
             ]),
             BarChartGroupData(x: 1, barRods: [
-              BarChartRodData(toY: 6, color: Colors.green[600]),
+              BarChartRodData(toY: 6, color: Colors.green[600], width: 25),
             ]),
             BarChartGroupData(x: 2, barRods: [
-              BarChartRodData(toY: 8, color: Colors.green[800]),
+              BarChartRodData(toY: 8, color: Colors.green[800], width: 25),
             ]),
             BarChartGroupData(x: 3, barRods: [
-              BarChartRodData(toY: 10, color: Colors.green[900]),
+              BarChartRodData(toY: 10, color: Colors.green[900], width: 25),
             ]),
           ],
         ),

@@ -17,72 +17,124 @@ class SidebarDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      width: 220,
       child: Container(
-        color: Colors.green[50],
+        color: const Color(0xFF2E6B3F), // Verde oscuro tipo el de la imagen
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 🧠 Encabezado con logo e info del usuario
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.green[700]),
+              margin: EdgeInsets.zero,
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.eco, color: Colors.white, size: 40),
-                  const SizedBox(height: 10),
-                  Text(
-                    "INVENTIVO",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                  // Imagen del robot
+                  Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(40),
+                      child: Image.asset(
+                        'assets/images/robot.png', // Asegúrate de que esté en assets/images/
+                        width: 65,
+                        height: 65,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "$userName ($role)",
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  const SizedBox(height: 12),
+                  Center(
+                    child: Text(
+                      userName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      role,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
 
-            // 🔹 Opciones de navegación
+            const SizedBox(height: 10),
+
+            // 🌿 Opciones de navegación principales
             _buildMenuItem(
-              icon: Icons.home,
-              text: "Inicio",
+              icon: Icons.eco,
+              text: "Dashboard",
               index: 0,
               onTap: onMenuSelected,
               context: context,
             ),
             _buildMenuItem(
-              icon: Icons.list_alt,
-              text: "Listar Plantas",
+              icon: Icons.local_florist,
+              text: "Plantas",
               index: 1,
               onTap: onMenuSelected,
               context: context,
             ),
             _buildMenuItem(
-              icon: Icons.add_circle_outline,
-              text: "Agregar Planta",
+              icon: Icons.inventory_2,
+              text: "Insumos",
               index: 2,
+              onTap: onMenuSelected,
+              context: context,
+            ),
+            _buildMenuItem(
+              icon: Icons.receipt_long,
+              text: "Facturación",
+              index: 3,
+              onTap: onMenuSelected,
+              context: context,
+            ),
+            _buildMenuItem(
+              icon: Icons.group,
+              text: "Personal",
+              index: 4,
               onTap: onMenuSelected,
               context: context,
             ),
 
             const Spacer(),
 
-            // 🔹 Logout al final
+            // 🔹 Opción de salir
             ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text("Cerrar Sesión"),
+              leading: const Icon(Icons.logout, color: Colors.white),
+              title: const Text(
+                "Salir",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
               onTap: onLogout,
             ),
+
+            // ⚙️ Opción de configuración (no funcional aún, puedes asignarle índice si deseas)
+            ListTile(
+              leading: const Icon(Icons.settings, color: Colors.white),
+              title: const Text(
+                "Configuración",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+              onTap: () {}, // puedes poner otro onMenuSelected si deseas
+            ),
+
+            const SizedBox(height: 10),
           ],
         ),
       ),
     );
   }
 
+  // 🔹 Widget auxiliar para crear cada botón del menú
   Widget _buildMenuItem({
     required IconData icon,
     required String text,
@@ -91,8 +143,14 @@ class SidebarDashboard extends StatelessWidget {
     required BuildContext context,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.green[800]),
-      title: Text(text, style: const TextStyle(fontSize: 16)),
+      leading: Icon(icon, color: Colors.white),
+      title: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+        ),
+      ),
       onTap: () {
         Navigator.pop(context); // Cierra el drawer
         onTap(index);
