@@ -7,23 +7,28 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.9.2
+
 dependencies:
-  crypto: ^3.0.3
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # 📦 Dependencias adicionales del proyecto
   http: ^1.5.0
   shared_preferences: ^2.2.2
   google_fonts: ^6.3.2
-  cupertino_icons: ^1.0.8
+  crypto: ^3.0.3
+  
+  # 📊 Para los gráficos (barras y pastel)
+  fl_chart: ^0.65.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^5.0.0
 
 flutter:
-
   uses-material-design: true
+
   assets:
-  - assets/images/
+    - assets/images/
