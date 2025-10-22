@@ -62,49 +62,151 @@ class _AgregarPlantaScreenState extends State<AgregarPlantaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Agregar Planta')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: const Color(0xFFE9E5E3), // color de fondo similar al diseño
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _nameCtrl,
-                decoration: const InputDecoration(labelText: 'Nombre de la planta'),
-                validator: (v) => v!.isEmpty ? 'Campo requerido' : null,
-              ),
-              TextFormField(
-                controller: _typeCtrl,
-                decoration: const InputDecoration(labelText: 'Tipo de planta'),
-              ),
-              TextFormField(
-                controller: _bagCtrl,
-                decoration: const InputDecoration(labelText: 'Número de bolsa'),
-              ),
-              TextFormField(
-                controller: _cantidadCtrl,
-                decoration: const InputDecoration(labelText: 'Cantidad'),
-                keyboardType: TextInputType.number,
-              ),
-              TextFormField(
-                controller: _priceCtrl,
-                decoration: const InputDecoration(labelText: 'Precio'),
-                keyboardType: TextInputType.number,
-              ),
-              TextFormField(
-                controller: _estadoCtrl,
-                decoration: const InputDecoration(labelText: 'Estado'),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: _isSaving ? null : _guardarPlanta,
-                icon: const Icon(Icons.save),
-                label: const Text('Guardar'),
-              ),
-            ],
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 🏷️ Título principal
+                const Text(
+                  'Agregar Planta',
+                  style: TextStyle(
+                    fontSize: 38,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // 🔍 Barra de búsqueda
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // 📋 Contenedor principal de los campos
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // 📦 Filas dobles de campos
+                      Row(
+                        children: [
+                          Expanded(child: _buildInputTile(Icons.local_florist, "Nombre del producto", _nameCtrl, "Rosas")),
+                          const SizedBox(width: 26),
+                          Expanded(child: _buildInputTile(Icons.shopping_bag, "Número de bolsa", _bagCtrl, "35")),
+                        ],
+                      ),
+                      const SizedBox(height: 26),
+                      Row(
+                        children: [
+                          Expanded(child: _buildInputTile(Icons.category, "Categoría", _typeCtrl, "Ornamentales")),
+                          const SizedBox(width: 26),
+                          Expanded(child: _buildInputTile(Icons.attach_money, "Precio Unitario", _priceCtrl, "\$6.000")),
+                        ],
+                      ),
+                      const SizedBox(height: 26),
+                      Row(
+                        children: [
+                          Expanded(child: _buildInputTile(Icons.eco, "Total de plantas", _cantidadCtrl, "148")),
+                          const SizedBox(width: 26),
+                          Expanded(child: _buildInputTile(Icons.eco_outlined, "Estado", _estadoCtrl, "Disponible")),
+                        ],
+                      ),
+
+                      const SizedBox(height: 34),
+
+                      // 🌿 Botón para agregar producto
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _isSaving ? null : _guardarPlanta,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2E6B3F),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: _isSaving
+                              ? const SizedBox(
+                                  height: 30,
+                                  width: 30,
+                                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                )
+                              : const Text(
+                                  'Agregar productos',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  // 🌱 Tarjeta para cada campo con ícono y texto
+  Widget _buildInputTile(IconData icon, String label, TextEditingController controller, String hint) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9F9F9),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFF2E6B3F), size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextFormField(
+              controller: controller,
+              style: const TextStyle(fontSize: 15, color: Colors.black87),
+              decoration: InputDecoration(
+                labelText: label,
+                labelStyle: const TextStyle(color: Colors.black54, fontSize: 14),
+                hintText: hint,
+                border: InputBorder.none,
+              ),
+              validator: (v) => v!.isEmpty ? 'Campo requerido' : null,
+            ),
+          ),
+        ],
       ),
     );
   }
