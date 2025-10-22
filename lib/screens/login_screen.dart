@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inventivo_viveros/screens/dashboard.dart';
 import 'register_screen.dart';
 
-// ✅ Cambia por tu IP local o usa 10.0.2.2 si estás en emulador Android
 const String loginUrl = "http://127.0.0.1/backend_inventivo/api/login.php";
 
 class LoginScreen extends StatefulWidget {
@@ -34,7 +33,6 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isLoading = true);
 
     try {
-      // ✅ Se envía en formato JSON
       final response = await http.post(
         Uri.parse(loginUrl),
         headers: {"Content-Type": "application/json"},
@@ -44,12 +42,9 @@ class _LoginScreenState extends State<LoginScreen> {
         }),
       );
 
-      print("📩 Respuesta del servidor: ${response.body}");
-
       final data = json.decode(response.body);
 
       if (data['success'] == true) {
-        // ✅ Guardar datos en SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLogged', true);
         await prefs.setString('email', email);
@@ -60,7 +55,6 @@ class _LoginScreenState extends State<LoginScreen> {
           SnackBar(content: Text("Bienvenido ${data['name']}")),
         );
 
-        // ✅ Ir al Dashboard
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const DashboardScreen()),
@@ -81,67 +75,176 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Para hacerlo adaptable a distintos tamaños de pantalla
+    final screenWidth = MediaQuery.of(context).size.width;
+    final formWidth = screenWidth < 400 ? screenWidth * 0.85 : 350.0;
+
     return Scaffold(
-      body: Stack(children: [
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/fondo.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Container(color: Colors.black.withOpacity(0.5)),
-        Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Card(
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    const Text("INICIAR SESIÓN",
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green)),
-                    const SizedBox(height: 20),
-                    TextField(
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                            labelText: "Correo electrónico")),
-                    const SizedBox(height: 10),
-                    TextField(
-                        controller: passwordController,
-                        obscureText: true,
-                        decoration:
-                            const InputDecoration(labelText: "Contraseña")),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: isLoading ? null : loginUser,
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          minimumSize: const Size(double.infinity, 45)),
-                      child: isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text("INGRESAR"),
-                    ),
-                    const SizedBox(height: 10),
-                TextButton(
-                      onPressed: () => Navigator.pushReplacement(
-                          context, 
-                          MaterialPageRoute(builder: (context) => const RegisterScreen()),),
-                      child: const Text("¿No tienes cuenta? Regístrate aquí"),
-                    ),                  ],
+      body: Stack(
+        children: [
+          // Fondo con filtro verdoso
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: const AssetImage("assets/images/fondo.png"),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Colors.green.withOpacity(0.45),
+                  BlendMode.overlay,
                 ),
               ),
             ),
           ),
-        ),
-      ]),
+
+          // Filtro oscuro leve
+          Container(color: Colors.black.withOpacity(0.25)),
+
+          // Contenido principal
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Iniciar Sesión",
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Campo de correo
+                  SizedBox(
+                    width: formWidth,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(40),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          prefixIcon:
+                              Icon(Icons.person_outline, color: Colors.grey),
+                          hintText: "Correo Electrónico",
+                          border: InputBorder.none,
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Campo de contraseña
+                  SizedBox(
+                    width: formWidth,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(40),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: passwordController,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          prefixIcon:
+                              Icon(Icons.lock_outline, color: Colors.grey),
+                          hintText: "Contraseña",
+                          border: InputBorder.none,
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Botón principal
+                  SizedBox(
+                    width: formWidth,
+                    child: ElevatedButton(
+                      onPressed: isLoading ? null : loginUser,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade700,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        minimumSize: const Size(double.infinity, 50),
+                        elevation: 6,
+                      ),
+                      child: isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                              "INGRESAR",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                                color: Colors.white, // <-- Blanco puro
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Enlace de registro
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterScreen()),
+                      );
+                    },
+                    child: const Text(
+                      "Regístrate aquí",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+
+                  // Enlace de olvido de contraseña
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      "¿Olvidaste tu contraseña?",
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

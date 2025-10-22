@@ -6,7 +6,7 @@ class ApiConfig {
 
   static String getBaseUrl() {
     if (kIsWeb) {
-      return "http://192.168.101.25/$backendFolder";
+      return "http://192.168.81.34/$backendFolder";
     }
     if (Platform.isAndroid) {
       return "http://10.0.2.2/$backendFolder";
