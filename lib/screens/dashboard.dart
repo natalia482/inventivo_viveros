@@ -99,96 +99,152 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ];
 
     return Scaffold(
-  appBar: AppBar(
-    backgroundColor: Colors.green[700],
-    elevation: 2,
-    title: Row(
-      children: [
-        const Icon(Icons.eco, color: Colors.white),
-        const SizedBox(width: 10),
-        const Text(
-          "INVENTIVO",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      appBar: AppBar(
+        backgroundColor: Colors.green[700],
+        elevation: 2,
+        title: Row(
+          children: [
+            const Icon(Icons.eco, color: Colors.white),
+            const SizedBox(width: 10),
+            const Text(
+              "INVENTIVO",
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
-      ],
-    ),
-  ),
-  drawer: SidebarDashboard(
-    userName: name ?? 'Usuario',
-    role: role ?? 'Administrador',
-    onMenuSelected: _onMenuSelected,
-    onLogout: logout,
-  ),
-  body: AnimatedSwitcher(
-    duration: const Duration(milliseconds: 300),
-    child: pages[_selectedIndex],
-  ),
-);
+      ),
+      drawer: SidebarDashboard(
+        userName: name ?? 'Usuario',
+        role: role ?? 'Administrador',
+        onMenuSelected: _onMenuSelected,
+        onLogout: logout,
+      ),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: pages[_selectedIndex],
+      ),
+    );
   }
 
-  // 🌿 Dashboard visual principal
+  // 🌿 Dashboard visual principal adaptado y centrado
   Widget _buildDashboardPrincipal() {
     return Container(
       color: const Color(0xFFF2F2F2),
       padding: const EdgeInsets.all(20),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Dashboard General",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isMobile = constraints.maxWidth < 700;
+
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1200),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment:
+                      isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Dashboard General",
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // 📊 Gráficos principales
+                    isMobile
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 20),
+                                width: double.infinity,
+                                child: _buildGraficoBarras(),
+                              ),
+                              _buildGraficoCircular(),
+                            ],
+                          )
+                        : Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: _buildGraficoBarras()),
+                              const SizedBox(width: 20),
+                              Expanded(child: _buildGraficoCircular()),
+                            ],
+                          ),
+
+                    const SizedBox(height: 30),
+
+                    const Text(
+                      "Indicadores clave",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+
+                    // 💡 Tarjetas inferiores
+                    isMobile
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              _buildIndicador(
+                                icon: Icons.local_florist,
+                                valor: "1,512",
+                                titulo: "Total Productos",
+                              ),
+                              const SizedBox(height: 10),
+                              _buildIndicador(
+                                icon: Icons.warning_amber_rounded,
+                                valor: "Stock Bajo",
+                                titulo: "",
+                              ),
+                              const SizedBox(height: 10),
+                              _buildIndicador(
+                                icon: Icons.attach_money,
+                                valor: "\$145,000",
+                                titulo: "Ingresos Mes",
+                              ),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: _buildIndicador(
+                                  icon: Icons.local_florist,
+                                  valor: "1,512",
+                                  titulo: "Total Productos",
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildIndicador(
+                                  icon: Icons.warning_amber_rounded,
+                                  valor: "Stock Bajo",
+                                  titulo: "",
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildIndicador(
+                                  icon: Icons.attach_money,
+                                  valor: "\$145,000",
+                                  titulo: "Ingresos Mes",
+                                ),
+                              ),
+                            ],
+                          ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 20),
-
-            // 📊 Gráficos principales
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: _buildGraficoBarras()),
-                const SizedBox(width: 20),
-                Expanded(child: _buildGraficoCircular()),
-              ],
-            ),
-            const SizedBox(height: 30),
-
-            const Text(
-              "Indicadores clave",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 15),
-
-            // 💡 Tarjetas inferiores
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildIndicador(
-                  icon: Icons.local_florist,
-                  valor: "1,512",
-                  titulo: "Total Productos",
-                ),
-                _buildIndicador(
-                  icon: Icons.warning_amber_rounded,
-                  valor: "Stock Bajo",
-                  titulo: "",
-                ),
-                _buildIndicador(
-                  icon: Icons.attach_money,
-                  valor: "\$145,000",
-                  titulo: "Ingresos Mes",
-                ),
-              ],
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -200,6 +256,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       height: 250,
       child: BarChart(
@@ -215,7 +278,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 showTitles: true,
                 getTitlesWidget: (value, meta) {
                   const labels = ['Producto 1', 'Producto 2', 'Producto 3', 'Producto 4'];
-                  return Text(labels[value.toInt() % labels.length]);
+                  return Text(
+                    labels[value.toInt() % labels.length],
+                    style: const TextStyle(fontSize: 10),
+                  );
                 },
               ),
             ),
@@ -246,6 +312,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       height: 250,
       child: PieChart(
@@ -269,35 +342,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
     required String valor,
     required String titulo,
   }) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 6),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.green[800], size: 30),
-            const SizedBox(height: 8),
-            Text(
-              valor,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 6),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: Colors.green[800], size: 35),
+          const SizedBox(height: 8),
+          Text(
+            valor,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
-            if (titulo.isNotEmpty)
-              Text(
-                titulo,
-                style: const TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-          ],
-        ),
+          ),
+          if (titulo.isNotEmpty)
+            Text(
+              titulo,
+              style: const TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+        ],
       ),
     );
   }
