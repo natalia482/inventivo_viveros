@@ -177,7 +177,10 @@ class _SidebarDashboardState extends State<SidebarDashboard> {
                 "Configuración",
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
-              onTap: () {}, // puedes asignar un índice si deseas
+              onTap: () {
+                Navigator.pop(context);
+                widget.onMenuSelected(4); // 👈 index 4 corresponde a configurationPage
+              },
             ),
 
             const SizedBox(height: 10),

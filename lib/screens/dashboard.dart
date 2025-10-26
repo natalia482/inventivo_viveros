@@ -6,6 +6,7 @@ import 'package:inventivo_viveros/screens/plantas/lista_plantas.dart';
 import 'package:inventivo_viveros/screens/plantas/agregar_plantas.dart';
 import 'package:inventivo_viveros/screens/plantas/editar_plantas.dart';
 import 'package:inventivo_viveros/models/planta_model.dart';
+import 'package:inventivo_viveros/screens/configuration.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -96,6 +97,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         )
       else
         const Center(child: Text('Seleccione una planta para editar')),
+      const configurationPage()
     ];
 
     return Scaffold(
